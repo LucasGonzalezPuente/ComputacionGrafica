@@ -1,0 +1,10 @@
+^D:\UNIERASMUS\2CUATRI\CG\TRABAJO\BUILD\CMAKEFILES\C6EDC866ED9EE268014D33CE10CD63BE\GENERATE.STAMP.RULE
+setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SD:/UniErasmus/2cuatri/CG/TRABAJO -BD:/UniErasmus/2cuatri/CG/TRABAJO/build --check-stamp-list CMakeFiles/generate.stamp.list --vs-solution-file D:/UniErasmus/2cuatri/CG/TRABAJO/build/CG_Project.sln
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
