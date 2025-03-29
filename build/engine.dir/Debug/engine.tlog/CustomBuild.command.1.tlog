@@ -1,0 +1,10 @@
+^D:\UNIERASMUS\2CUATRI\CG\TRABAJO\ONTHEWORK\CMAKELISTS.TXT
+setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SD:/UniErasmus/2cuatri/CG/TRABAJO/OnTheWork -BD:/UniErasmus/2cuatri/CG/TRABAJO/OnTheWork/build --check-stamp-file D:/UniErasmus/2cuatri/CG/TRABAJO/OnTheWork/build/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
