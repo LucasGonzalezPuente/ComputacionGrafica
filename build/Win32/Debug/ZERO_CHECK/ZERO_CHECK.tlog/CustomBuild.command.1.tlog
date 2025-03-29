@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 ^D:\UNIERASMUS\2CUATRI\CG\TRABAJO\ONTHEWORK\BUILD\CMAKEFILES\F27613B23BE04487F607EF90CD54ECF4\GENERATE.STAMP.RULE
 setlocal
 "C:\Program Files\CMake\bin\cmake.exe" -SD:/UniErasmus/2cuatri/CG/TRABAJO/OnTheWork -BD:/UniErasmus/2cuatri/CG/TRABAJO/OnTheWork/build --check-stamp-list CMakeFiles/generate.stamp.list --vs-solution-file D:/UniErasmus/2cuatri/CG/TRABAJO/OnTheWork/build/CG_Project.sln
@@ -8,3 +9,15 @@ endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
 exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd
+=======
+^D:\UNIERASMUS\2CUATRI\CG\TRABAJO\BUILD\CMAKEFILES\C6EDC866ED9EE268014D33CE10CD63BE\GENERATE.STAMP.RULE
+setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SD:/UniErasmus/2cuatri/CG/TRABAJO -BD:/UniErasmus/2cuatri/CG/TRABAJO/build --check-stamp-list CMakeFiles/generate.stamp.list --vs-solution-file D:/UniErasmus/2cuatri/CG/TRABAJO/build/CG_Project.sln
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+>>>>>>> f18656c18b0d3b26c5d408b3ac48de1be8f7f153

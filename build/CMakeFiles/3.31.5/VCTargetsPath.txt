@@ -1,1 +1,5 @@
+<<<<<<< HEAD
 C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/MSBuild/Microsoft/VC/v170
+=======
+C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/MSBuild/Microsoft/VC/v170
+>>>>>>> f18656c18b0d3b26c5d408b3ac48de1be8f7f153

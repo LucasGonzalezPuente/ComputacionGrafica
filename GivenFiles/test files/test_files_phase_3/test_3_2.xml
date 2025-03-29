@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <world> 
     <window width="512" height="512" />
     <camera> 
@@ -14,4 +15,22 @@
 			<model file="bezier_10.3d" /> <!-- generator patch teapot.patch 10 bezier_10.3d -->
  		</models>
  	</group>
+=======
+<world> 
+    <window width="512" height="512" />
+    <camera> 
+	    <position x="4" y="4" z="6" />
+	    <lookAt x="0" y="0" z="0" />
+	    <up x="0" y="1" z="0" /> <!-- optional, use these values as default-->
+        <projection fov="60" near="1" far="1000" /> <!-- optional, use these values as default-->
+    </camera>
+	<group> 
+		<transform>
+			<rotate angle="-90" x = "1" y="0" z = "0" /> 
+		</transform>
+  		<models> 
+			<model file="bezier_10.3d" /> <!-- generator patch teapot.patch 10 bezier_10.3d -->
+ 		</models>
+ 	</group>
+>>>>>>> f18656c18b0d3b26c5d408b3ac48de1be8f7f153
 </world>

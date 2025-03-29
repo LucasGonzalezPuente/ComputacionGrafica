@@ -1,3 +1,9 @@
+<<<<<<< HEAD
 ﻿  Building Custom Rule D:/UniErasmus/2cuatri/CG/TRABAJO/CMakeLists.txt
   generator.cpp
   generator.vcxproj -> D:\UniErasmus\2cuatri\CG\TRABAJO\build\Debug\generator.exe
+=======
+﻿  Building Custom Rule D:/UniErasmus/2cuatri/CG/TRABAJO/CMakeLists.txt
+  generator.cpp
+  generator.vcxproj -> D:\UniErasmus\2cuatri\CG\TRABAJO\build\Debug\generator.exe
+>>>>>>> f18656c18b0d3b26c5d408b3ac48de1be8f7f153
