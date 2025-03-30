@@ -1,20 +1,16 @@
-#include <cstdlib>
+#include <cstdlib> // Incluir antes de glut.h
 #include <GL/glut.h>
-#include "GivenFiles/toolkits/tinyxml2.h"
+#include "GivenFiles/toolkits/tinyxml2.h" // Incluir TinyXML2
 #include <iostream>
 #include <vector>
 #include <string>
 #include <fstream>
+
+#define _USE_MATH_DEFINES // Habilitar constantes matemáticas (como M_PI)
 #include <cmath>
 
 using namespace std;
 using namespace tinyxml2;
-
-// Constants
-#define _USE_MATH_DEFINES
-#ifndef M_PI
-#define M_PI 3.14159265358979323846
-#endif
 
 // Structures
 struct Camera {
@@ -286,8 +282,15 @@ void renderModel(const Model& model, const vector<float>& color) {
 }
 
 void applyTransform(const Transform& transform) {
+    // Aplicar rotación primero
+    if (transform.rotate[0] != 0) { // Si el ángulo no es cero
+        glRotatef(transform.rotate[0], transform.rotate[1], transform.rotate[2], transform.rotate[3]);
+    }
+
+    // Aplicar traslación después
     glTranslatef(transform.translate[0], transform.translate[1], transform.translate[2]);
-    glRotatef(transform.rotate[0], transform.rotate[1], transform.rotate[2], transform.rotate[3]);
+
+    // Aplicar escala (si es necesario)
     glScalef(transform.scale[0], transform.scale[1], transform.scale[2]);
 }
 

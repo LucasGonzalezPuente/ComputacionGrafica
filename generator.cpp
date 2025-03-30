@@ -207,9 +207,9 @@ void generateCone(float radius, float height, int slices, int stacks, const stri
     int numVertices = (stacks + 1) * (slices + 1) + 1; // +1 para el vértice superior
     file << numVertices << endl;
 
-    // Generar los vértices de la base
+    // Generar los vértices del cono (base en y=0, vértice en y=height)
     for (int i = 0; i <= stacks; i++) {
-        float y = -height / 2 + i * (height / stacks);
+        float y = i * (height / stacks); // Base en y=0, vértice en y=height
         float currentRadius = radius * (1 - (float)i / stacks);
         for (int j = 0; j <= slices; j++) {
             float theta = 2 * M_PI * j / slices;
@@ -220,7 +220,7 @@ void generateCone(float radius, float height, int slices, int stacks, const stri
     }
 
     // Vértice superior
-    file << "0 " << height / 2 << " 0" << endl;
+    file << "0 " << height << " 0" << endl;
 
     // Calcular el número de caras (triángulos)
     int numFaces = stacks * slices * 2 + slices; // +slices para los triángulos de la base

@@ -1,7 +1,6 @@
-<<<<<<< HEAD
-^D:\UNIERASMUS\2CUATRI\CG\TRABAJO\CMAKELISTS.TXT
+^D:\UNIERASMUS\2CUATRI\CG\TRABAJO\ONTHEWORK\CMAKELISTS.TXT
 setlocal
-"C:\Program Files\CMake\bin\cmake.exe" -SD:/UniErasmus/2cuatri/CG/TRABAJO -BD:/UniErasmus/2cuatri/CG/TRABAJO/build --check-stamp-file D:/UniErasmus/2cuatri/CG/TRABAJO/build/CMakeFiles/generate.stamp
+"C:\Program Files\CMake\bin\cmake.exe" -SD:/UniErasmus/2cuatri/CG/TRABAJO/OnTheWork -BD:/UniErasmus/2cuatri/CG/TRABAJO/OnTheWork/build --check-stamp-file D:/UniErasmus/2cuatri/CG/TRABAJO/OnTheWork/build/CMakeFiles/generate.stamp
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
@@ -9,15 +8,3 @@ endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
 exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd
-=======
-^D:\UNIERASMUS\2CUATRI\CG\TRABAJO\CMAKELISTS.TXT
-setlocal
-"C:\Program Files\CMake\bin\cmake.exe" -SD:/UniErasmus/2cuatri/CG/TRABAJO -BD:/UniErasmus/2cuatri/CG/TRABAJO/build --check-stamp-file D:/UniErasmus/2cuatri/CG/TRABAJO/build/CMakeFiles/generate.stamp
-if %errorlevel% neq 0 goto :cmEnd
-:cmEnd
-endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
-:cmErrorLevel
-exit /b %1
-:cmDone
-if %errorlevel% neq 0 goto :VCEnd
->>>>>>> f18656c18b0d3b26c5d408b3ac48de1be8f7f153
