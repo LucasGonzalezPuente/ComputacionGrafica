@@ -5,6 +5,8 @@
 #include <vector>
 #include <string>
 #include <cstring>
+#include <algorithm> // Add this for replace function
+#include <sstream>   // Add this for istringstream
 
 #ifndef M_PI
 #define M_PI 3.14159265358979323846
@@ -254,11 +256,149 @@ void generateCone(float radius, float height, int slices, int stacks, const stri
     cout << "Archivo generado: " << filename << endl;
 }
 
+//Bezier//
+
+// Add these helper functions near the top of the file, after the Vertex struct
+Vertex newVertex(float x, float y, float z) {
+    Vertex v;
+    v.x = x;
+    v.y = y;
+    v.z = z;
+    return v;
+}
+
+float getX(const Vertex& v) { return v.x; }
+float getY(const Vertex& v) { return v.y; }
+float getZ(const Vertex& v) { return v.z; }
+
+Vertex bezier(float u, float v, const vector<Vertex>& controlPoints, const vector<int>& patchIndices) {
+    Vertex result = { 0, 0, 0 };
+
+    // Bernstein basis functions for u and v
+    float bu[4], bv[4];
+    float u1 = 1 - u;
+    float v1 = 1 - v;
+
+    bu[0] = u1 * u1 * u1;
+    bu[1] = 3 * u * u1 * u1;
+    bu[2] = 3 * u * u * u1;
+    bu[3] = u * u * u;
+
+    bv[0] = v1 * v1 * v1;
+    bv[1] = 3 * v * v1 * v1;
+    bv[2] = 3 * v * v * v1;
+    bv[3] = v * v * v;
+
+    // Calculate the point on the Bezier surface
+    for (int i = 0; i < 4; i++) {
+        for (int j = 0; j < 4; j++) {
+            int index = patchIndices[i * 4 + j];
+            const Vertex& cp = controlPoints[index];
+
+            float basis = bu[i] * bv[j];
+            result.x += cp.x * basis;
+            result.y += cp.y * basis;
+            result.z += cp.z * basis;
+        }
+    }
+
+    return result;
+}
+
+void generateBezierSurface(const string& patchFilePath, const string& outputFileName, int tessellation) {
+    ifstream patchFile(patchFilePath);
+    if (!patchFile.is_open()) {
+        cerr << "Error al abrir el archivo de entrada: " << patchFilePath << endl;
+        return;
+    }
+
+    ofstream outputFile(outputFileName);
+    if (!outputFile.is_open()) {
+        cerr << "Error al abrir el archivo de salida: " << outputFileName << endl;
+        return;
+    }
+
+    // Read patch file
+    string line;
+    getline(patchFile, line);
+    int numPatches = stoi(line);
+
+    vector<vector<int>> patches(numPatches);
+    for (int i = 0; i < numPatches; ++i) {
+        getline(patchFile, line);
+        replace(line.begin(), line.end(), ',', ' ');
+        istringstream iss(line);
+        vector<int> indices(16);
+        for (int j = 0; j < 16; ++j) {
+            iss >> indices[j];
+        }
+        patches[i] = indices;
+    }
+
+    getline(patchFile, line);
+    int numControlPoints = stoi(line);
+
+    vector<Vertex> controlPoints(numControlPoints);
+    for (int i = 0; i < numControlPoints; ++i) {
+        getline(patchFile, line);
+        replace(line.begin(), line.end(), ',', ' ');
+        istringstream iss(line);
+        float x, y, z;
+        iss >> x >> y >> z;
+        controlPoints[i] = newVertex(x, y, z);
+    }
+
+    // Generate vertices
+    vector<Vertex> vertices;
+    float step = 1.0f / tessellation;
+
+    for (auto& patch : patches) {
+        for (float u = 0; u <= 1.0f; u += step) {
+            for (float v = 0; v <= 1.0f; v += step) {
+                Vertex p = bezier(u, v, controlPoints, patch);
+                vertices.push_back(p);
+            }
+        }
+    }
+
+    // Write vertices to file
+    outputFile << vertices.size() << endl;
+    for (const auto& v : vertices) {
+        outputFile << v.x << " " << v.y << " " << v.z << endl;
+    }
+
+    // Generate faces (triangles)
+    int pointsPerPatch = (tessellation + 1) * (tessellation + 1);
+    int numFaces = numPatches * tessellation * tessellation * 2;
+    outputFile << numFaces << endl;
+
+    for (int p = 0; p < numPatches; p++) {
+        int patchOffset = p * pointsPerPatch;
+        for (int i = 0; i < tessellation; i++) {
+            for (int j = 0; j < tessellation; j++) {
+                int v1 = patchOffset + i * (tessellation + 1) + j;
+                int v2 = v1 + 1;
+                int v3 = v1 + tessellation + 1;
+                int v4 = v2 + tessellation + 1;
+
+                // First triangle
+                outputFile << v1 << " " << v2 << " " << v3 << endl;
+                // Second triangle
+                outputFile << v2 << " " << v4 << " " << v3 << endl;
+            }
+        }
+    }
+
+    patchFile.close();
+    outputFile.close();
+    cout << "Archivo generado: " << outputFileName << endl;
+}
+
 int main(int argc, char* argv[]) {
     // Verificar los argumentos de la línea de comandos
     if (argc < 2) {
         cerr << "Uso: generator <primitive> <params> <output_file>" << endl;
-        cerr << "Primitivas disponibles: plane, box, sphere, cone" << endl;
+        cerr << "Primitivas disponibles: plane, box, sphere, cone, bezier" << endl;
         return 1;
     }
 
@@ -305,6 +445,16 @@ int main(int argc, char* argv[]) {
         int stacks = stoi(argv[5]);
         string filename = argv[6];
         generateCone(radius, height, slices, stacks, filename);
+    }
+    else if (strcmp(argv[1], "bezier") == 0) {
+        if (argc != 5) {
+            cerr << "Uso: generator bezier <patch_file> <tessellation> <output_file>" << endl;
+            return 1;
+        }
+        string patchFile = argv[2];
+        int tessellation = stoi(argv[3]);
+        string filename = argv[4];
+        generateBezierSurface(patchFile, filename, tessellation);
     }
     else {
         cerr << "Primitiva no reconocida: " << argv[1] << endl;

@@ -1,3 +1,6 @@
+#ifdef _WIN32
+#include <GL/glew.h>
+#endif
 #include <cstdlib> // Incluir antes de glut.h
 #include <GL/glut.h>
 #include "GivenFiles/toolkits/tinyxml2.h" // Incluir TinyXML2
@@ -5,9 +8,14 @@
 #include <vector>
 #include <string>
 #include <fstream>
+#include <functional>
 
 #define _USE_MATH_DEFINES // Habilitar constantes matemáticas (como M_PI)
 #include <cmath>
+
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
 
 using namespace std;
 using namespace tinyxml2;
@@ -27,12 +35,25 @@ struct Window {
 struct Model {
     vector<float> vertices;
     vector<int> faces;
+
+    // New for Phase 3 VBO IDs
+    GLuint vertexBuffer;
+    GLuint indexBuffer;
+    bool buffersInitialized = false;
 };
 
 struct Transform {
     float translate[3] = { 0, 0, 0 };
     float rotate[4] = { 0, 0, 1, 0 }; // angle, x, y, z
     float scale[3] = { 1, 1, 1 };
+
+    // New for Phase 3
+    bool isTimedRotation = false;
+    float rotationTime = 0; // seconds for full rotation
+    bool isTimedTranslation = false;
+    float translationTime = 0; // seconds for full path
+    bool alignWithPath = false;
+    vector<vector<float>> translationPoints; // Catmull-Rom control points
 };
 
 struct Group {
@@ -68,6 +89,13 @@ void renderGroup(const Group& group);
 void renderScene();
 void keyboardFunc(unsigned char key, int x, int y);
 void specialKeys(int key, int x, int y);
+
+// NEW PHASE 3 functions
+// Add these right after the struct declarations
+vector<float> getCatmullRomPoint(float t, const vector<vector<float>>& p);
+vector<float> getCatmullRomDerivative(float t, const vector<vector<float>>& p);
+void initModelVBOs(Model& model);
+void renderModelWithVBOs(const Model& model, const vector<float>& color);
 
 // XML Parsing
 bool readXMLConfig(const string& filename, Window& window, Camera& camera, Group& rootGroup) {
@@ -142,21 +170,51 @@ Group parseGroup(XMLElement* groupElem) {
     // Parse transforms
     XMLElement* transformElem = groupElem->FirstChildElement("transform");
     if (transformElem) {
+        // Handle translation (static or time-based)
         XMLElement* translate = transformElem->FirstChildElement("translate");
         if (translate) {
-            translate->QueryFloatAttribute("x", &group.transform.translate[0]);
-            translate->QueryFloatAttribute("y", &group.transform.translate[1]);
-            translate->QueryFloatAttribute("z", &group.transform.translate[2]);
+            const char* timeAttr = translate->Attribute("time");
+            if (timeAttr) {
+                group.transform.isTimedTranslation = true;
+                group.transform.translationTime = stof(timeAttr);
+                const char* alignAttr = translate->Attribute("align");
+                if (alignAttr && (strcmp(alignAttr, "true") == 0 || strcmp(alignAttr, "1") == 0)) {
+                    group.transform.alignWithPath = true;
+                }
+
+                // Read Catmull-Rom points
+                for (XMLElement* point = translate->FirstChildElement("point"); point; point = point->NextSiblingElement("point")) {
+                    vector<float> p(3);
+                    point->QueryFloatAttribute("x", &p[0]);
+                    point->QueryFloatAttribute("y", &p[1]);
+                    point->QueryFloatAttribute("z", &p[2]);
+                    group.transform.translationPoints.push_back(p);
+                }
+            }
+            else {
+                translate->QueryFloatAttribute("x", &group.transform.translate[0]);
+                translate->QueryFloatAttribute("y", &group.transform.translate[1]);
+                translate->QueryFloatAttribute("z", &group.transform.translate[2]);
+            }
         }
 
+        // Handle rotation (static or time-based)
         XMLElement* rotate = transformElem->FirstChildElement("rotate");
         if (rotate) {
-            rotate->QueryFloatAttribute("angle", &group.transform.rotate[0]);
+            const char* timeAttr = rotate->Attribute("time");
+            if (timeAttr) {
+                group.transform.isTimedRotation = true;
+                group.transform.rotationTime = stof(timeAttr);
+            }
+            else {
+                rotate->QueryFloatAttribute("angle", &group.transform.rotate[0]);
+            }
             rotate->QueryFloatAttribute("x", &group.transform.rotate[1]);
             rotate->QueryFloatAttribute("y", &group.transform.rotate[2]);
             rotate->QueryFloatAttribute("z", &group.transform.rotate[3]);
         }
 
+        // Scale remains the same
         XMLElement* scale = transformElem->FirstChildElement("scale");
         if (scale) {
             scale->QueryFloatAttribute("x", &group.transform.scale[0]);
@@ -218,6 +276,10 @@ bool loadModel(const string& filename, Model& model) {
     }
 
     file.close();
+
+	// Initialize VBOs for the model
+	initModelVBOs(model);
+
     return true;
 }
 
@@ -263,6 +325,7 @@ void drawAxes() {
 }
 
 void renderModel(const Model& model, const vector<float>& color) {
+    /*
     glColor3f(color[0], color[1], color[2]);
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
@@ -279,18 +342,70 @@ void renderModel(const Model& model, const vector<float>& color) {
     glEnd();
 
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    */
+
+    renderModelWithVBOs(model, color);
 }
 
 void applyTransform(const Transform& transform) {
-    // Aplicar rotación primero
-    if (transform.rotate[0] != 0) { // Si el ángulo no es cero
+    // Handle time-based rotation
+    if (transform.isTimedRotation) {
+        float elapsed = glutGet(GLUT_ELAPSED_TIME) / 1000.0f; // seconds
+        float angle = fmod((elapsed / transform.rotationTime) * 360.0f, 360.0f);
+        glRotatef(angle, transform.rotate[1], transform.rotate[2], transform.rotate[3]);
+    }
+    // Static rotation
+    else if (transform.rotate[0] != 0) {
         glRotatef(transform.rotate[0], transform.rotate[1], transform.rotate[2], transform.rotate[3]);
     }
 
-    // Aplicar traslación después
-    glTranslatef(transform.translate[0], transform.translate[1], transform.translate[2]);
+    // Handle time-based translation
+    if (transform.isTimedTranslation && !transform.translationPoints.empty()) {
+        float elapsed = glutGet(GLUT_ELAPSED_TIME) / 1000.0f; // seconds
+        float t = fmod(elapsed / transform.translationTime, 1.0f);
 
-    // Aplicar escala (si es necesario)
+        // Calculate global T (considering all segments)
+        int numSegments = transform.translationPoints.size() - 3;
+        float segmentT = t * numSegments;
+        int segmentIndex = floor(segmentT);
+        segmentT = segmentT - segmentIndex;
+
+        // Get the 4 points for this segment
+        vector<vector<float>> p(4);
+        for (int i = 0; i < 4; i++) {
+            p[i] = transform.translationPoints[segmentIndex + i];
+        }
+
+        // Get position on curve
+        vector<float> pos = getCatmullRomPoint(segmentT, p);
+        glTranslatef(pos[0], pos[1], pos[2]);
+
+        // Align with path if requested
+        if (transform.alignWithPath) {
+            vector<float> deriv = getCatmullRomDerivative(segmentT, p);
+            // Normalize derivative to get forward vector
+            float len = sqrt(deriv[0] * deriv[0] + deriv[1] * deriv[1] + deriv[2] * deriv[2]);
+            if (len > 0.0001f) {
+                deriv[0] /= len;
+                deriv[1] /= len;
+                deriv[2] /= len;
+
+                // Calculate rotation to align with path
+                float angle = atan2(deriv[0], deriv[2]) * 180.0f / M_PI;
+                glRotatef(angle, 0, 1, 0);
+
+                // Calculate pitch (up/down rotation)
+                float pitch = asin(deriv[1]) * 180.0f / M_PI;
+                glRotatef(pitch, 1, 0, 0);
+            }
+        }
+    }
+    // Static translation
+    else {
+        glTranslatef(transform.translate[0], transform.translate[1], transform.translate[2]);
+    }
+
+    // Scale remains the same
     glScalef(transform.scale[0], transform.scale[1], transform.scale[2]);
 }
 
@@ -343,12 +458,110 @@ void specialKeys(int key, int x, int y) {
     glutPostRedisplay();
 }
 
+// NEW PHASE 3 functions //////////////////////////////////////////////////
+// Helper functions for Catmull-Rom curve calculations
+vector<float> getCatmullRomPoint(float t, const vector<vector<float>>& p) {
+    // Catmull-Rom matrix
+    float m[4][4] = { {-0.5f,  1.5f, -1.5f,  0.5f},
+                      { 1.0f, -2.5f,  2.0f, -0.5f},
+                      {-0.5f,  0.0f,  0.5f,  0.0f},
+                      { 0.0f,  1.0f,  0.0f,  0.0f} };
+
+    // Compute point at parameter t
+    float t3 = t * t * t;
+    float t2 = t * t;
+
+    vector<float> point(3, 0);
+    for (int i = 0; i < 3; i++) {
+        float a = m[0][0] * t3 + m[1][0] * t2 + m[2][0] * t + m[3][0];
+        float b = m[0][1] * t3 + m[1][1] * t2 + m[2][1] * t + m[3][1];
+        float c = m[0][2] * t3 + m[1][2] * t2 + m[2][2] * t + m[3][2];
+        float d = m[0][3] * t3 + m[1][3] * t2 + m[2][3] * t + m[3][3];
+
+        point[i] = a * p[0][i] + b * p[1][i] + c * p[2][i] + d * p[3][i];
+    }
+
+    return point;
+}
+
+vector<float> getCatmullRomDerivative(float t, const vector<vector<float>>& p) {
+    // Catmull-Rom matrix derivative
+    float m[4][4] = { {-1.5f,  4.5f, -4.5f,  1.5f},
+                      { 2.0f, -5.0f,  4.0f, -1.0f},
+                      {-0.5f,  0.0f,  0.5f,  0.0f},
+                      { 0.0f,  1.0f,  0.0f,  0.0f} };
+
+    // Compute derivative at parameter t
+    float t2 = t * t;
+
+    vector<float> derivative(3, 0);
+    for (int i = 0; i < 3; i++) {
+        float a = m[0][0] * t2 + m[1][0] * t + m[2][0];
+        float b = m[0][1] * t2 + m[1][1] * t + m[2][1];
+        float c = m[0][2] * t2 + m[1][2] * t + m[2][2];
+        float d = m[0][3] * t2 + m[1][3] * t + m[2][3];
+
+        derivative[i] = a * p[0][i] + b * p[1][i] + c * p[2][i] + d * p[3][i];
+    }
+
+    return derivative;
+}
+
+// Functions to initialize and render with VBOs
+void initModelVBOs(Model& model) {
+    if (model.buffersInitialized) return;
+
+    // Generate and bind vertex buffer
+    glGenBuffers(1, &model.vertexBuffer);
+    glBindBuffer(GL_ARRAY_BUFFER, model.vertexBuffer);
+    glBufferData(GL_ARRAY_BUFFER, model.vertices.size() * sizeof(float), model.vertices.data(), GL_STATIC_DRAW);
+
+    // Generate and bind index buffer
+    glGenBuffers(1, &model.indexBuffer);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, model.indexBuffer);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, model.faces.size() * sizeof(int), model.faces.data(), GL_STATIC_DRAW);
+
+    model.buffersInitialized = true;
+}
+
+void renderModelWithVBOs(const Model& model, const vector<float>& color) {
+    if (!model.buffersInitialized) {
+        // This shouldn't happen since we initialize VBOs during loading
+        cerr << "Error: Trying to render model with uninitialized VBOs" << endl;
+        return;
+    }
+
+    glColor3f(color[0], color[1], color[2]);
+    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
+    // Enable vertex array and specify its format
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glBindBuffer(GL_ARRAY_BUFFER, model.vertexBuffer);
+    glVertexPointer(3, GL_FLOAT, 0, 0);
+
+    // Bind index buffer and draw
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, model.indexBuffer);
+    glDrawElements(GL_TRIANGLES, model.faces.size(), GL_UNSIGNED_INT, 0);
+
+    // Cleanup
+    glDisableClientState(GL_VERTEX_ARRAY);
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+}
+
 // Main Function
 int main(int argc, char** argv) {
+
+    /*
+    cout << "Program starting" << endl;
+    cerr << "Error output test" << endl;
+    fflush(stdout);  // Force output flush
+    */
     if (argc != 2) {
         cerr << "Usage: " << argv[0] << " <config.xml>" << endl;
         return 1;
     }
+
+	cerr << "Starting program with config: " << argv[1] << endl;
 
     // Load configuration
     if (!readXMLConfig(argv[1], window, camera, rootGroup)) {
@@ -356,11 +569,26 @@ int main(int argc, char** argv) {
         return 1;
     }
 
+    cerr << "Config loaded" << endl;
+
     // Initialize GLUT
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
     glutInitWindowSize(window.width, window.height);
-    glutCreateWindow("3D Engine - Phase 2");
+    glutCreateWindow("3D Engine - Phase 3");
+
+	cerr << "GLUT initialized" << endl;
+
+    // Initialize GLEW (needed for VBOs on Windows)
+#ifdef WIN32
+    GLenum err = glewInit();
+    if (err != GLEW_OK) {
+        cerr << "Error initializing GLEW: " << glewGetErrorString(err) << endl;
+        return 1;
+    }
+#endif
+
+	cerr << "GLEW initialized" << endl;
 
     // OpenGL settings
     glEnable(GL_DEPTH_TEST);
@@ -369,13 +597,49 @@ int main(int argc, char** argv) {
     glEnable(GL_LIGHT0);
     glEnable(GL_COLOR_MATERIAL);
 
+    // Set up lighting
+    GLfloat light_position[] = { 5.0f, 5.0f, 5.0f, 1.0f };
+    GLfloat light_ambient[] = { 0.2f, 0.2f, 0.2f, 1.0f };
+    GLfloat light_diffuse[] = { 0.8f, 0.8f, 0.8f, 1.0f };
+    GLfloat light_specular[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+
+    glLightfv(GL_LIGHT0, GL_POSITION, light_position);
+    glLightfv(GL_LIGHT0, GL_AMBIENT, light_ambient);
+    glLightfv(GL_LIGHT0, GL_DIFFUSE, light_diffuse);
+    glLightfv(GL_LIGHT0, GL_SPECULAR, light_specular);
+
     // Register callbacks
     glutDisplayFunc(renderScene);
     glutKeyboardFunc(keyboardFunc);
     glutSpecialFunc(specialKeys);
 
+    // Enable idle function for animations
+    glutIdleFunc([]() {
+        static int lastTime = 0;
+        int currentTime = glutGet(GLUT_ELAPSED_TIME);
+        if (currentTime - lastTime > 16) { // ~60 FPS
+            glutPostRedisplay();
+            lastTime = currentTime;
+        }
+        });
+
     // Start main loop
     glutMainLoop();
+
+    // Clean up VBOs
+    function<void(Group&)> cleanupModels;
+    cleanupModels = [&cleanupModels](Group& group) {
+        for (auto& model : group.models) {
+            if (model.buffersInitialized) {
+                glDeleteBuffers(1, &model.vertexBuffer);
+                glDeleteBuffers(1, &model.indexBuffer);
+            }
+        }
+        for (auto& child : group.children) {
+            cleanupModels(child);
+        }
+        };
+    cleanupModels(rootGroup);
 
     return 0;
 }

@@ -4,6 +4,9 @@
   "Documents": [
     {
       "AbsoluteMoniker": "D:0:0:{9A1BEADC-3B2A-33FF-8728-A85F25D39428}|engine.vcxproj|D:\\UniErasmus\\2cuatri\\CG\\TRABAJO\\OnTheWork\\engine.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{87E5F277-C5E8-3D9D-92E4-72A79DFEEDEB}|generator.vcxproj|D:\\UniErasmus\\2cuatri\\CG\\TRABAJO\\OnTheWork\\generator.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     }
   ],
   "DocumentGroupContainers": [
@@ -13,11 +16,23 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 1,
+          "SelectedChildIndex": 2,
           "Children": [
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "generator.cpp",
+              "DocumentMoniker": "D:\\UniErasmus\\2cuatri\\CG\\TRABAJO\\OnTheWork\\generator.cpp",
+              "RelativeDocumentMoniker": "..\\generator.cpp",
+              "ToolTip": "D:\\UniErasmus\\2cuatri\\CG\\TRABAJO\\OnTheWork\\generator.cpp",
+              "RelativeToolTip": "..\\generator.cpp",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAMQAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2025-04-07T14:52:50.875Z"
             },
             {
               "$type": "Document",
@@ -27,7 +42,7 @@
               "RelativeDocumentMoniker": "..\\engine.cpp",
               "ToolTip": "D:\\UniErasmus\\2cuatri\\CG\\TRABAJO\\OnTheWork\\engine.cpp",
               "RelativeToolTip": "..\\engine.cpp",
-              "ViewState": "AgIAABoBAAAAAAAAAAAkwCkBAAATAAAAAAAAAA==",
+              "ViewState": "AgIAACYCAAAAAAAAAAAnwDMCAAA9AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2025-03-30T20:17:14.436Z",
               "EditorCaption": ""
