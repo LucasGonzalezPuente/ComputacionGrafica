@@ -56,6 +56,9 @@ struct Transform {
     float translationTime = 0;
     bool alignWithPath = false;
     vector<vector<float>> translationPoints;
+    vector<vector<float>> bezierControlPoints; 
+    vector<vector<float>> bezierCurve; 
+
 };
 
 struct Group {
@@ -98,6 +101,8 @@ vector<float> getCatmullRomPoint(float t, const vector<vector<float>>& p);
 vector<float> getCatmullRomDerivative(float t, const vector<vector<float>>& p);
 void initModelVBOs(Model& model);
 void renderModelWithVBOs(const Model& model, const vector<float>& color);
+vector<vector<float>> generateBezierCurve(const vector<vector<float>>& controlPoints, int segments = 100);
+void drawBezierCurve(const vector<vector<float>>& curvePoints);
 
 // XML Parsing
 bool readXMLConfig(const string& filename, Window& window, Camera& camera, Group& rootGroup) {
@@ -176,12 +181,12 @@ bool readXMLConfig(const string& filename, Window& window, Camera& camera, Group
 Group parseGroup(XMLElement* groupElem) {
     Group group;
 
-	if (!groupElem) {
-		if (DEBUG) cerr << "Error: groupElem is null" << endl;
-		return group;
-	}
+    if (!groupElem) {
+        if (DEBUG) cerr << "Error: groupElem is null" << endl;
+        return group;
+    }
 
-	if (DEBUG) cerr << "Parsing group element" << endl;
+    if (DEBUG) cerr << "Parsing group element" << endl;
 
     // Parse transforms
     XMLElement* transformElem = groupElem->FirstChildElement("transform");
@@ -205,6 +210,11 @@ Group parseGroup(XMLElement* groupElem) {
                     point->QueryFloatAttribute("y", &p[1]);
                     point->QueryFloatAttribute("z", &p[2]);
                     group.transform.translationPoints.push_back(p);
+                }
+
+                // Generate Bézier curve if we have enough points
+                if (group.transform.translationPoints.size() >= 4) {
+                    group.transform.bezierCurve = generateBezierCurve(group.transform.translationPoints);
                 }
             }
             else {
@@ -237,47 +247,61 @@ Group parseGroup(XMLElement* groupElem) {
             scale->QueryFloatAttribute("y", &group.transform.scale[1]);
             scale->QueryFloatAttribute("z", &group.transform.scale[2]);
         }
+
+        // Handle Bézier curve points if they exist
+        XMLElement* bezier = transformElem->FirstChildElement("bezier");
+        if (bezier) {
+            for (XMLElement* point = bezier->FirstChildElement("point"); point; point = point->NextSiblingElement("point")) {
+                vector<float> p(3);
+                point->QueryFloatAttribute("x", &p[0]);
+                point->QueryFloatAttribute("y", &p[1]);
+                point->QueryFloatAttribute("z", &p[2]);
+                group.transform.bezierControlPoints.push_back(p);
+            }
+            
+            // Generate Bézier curve from control points
+            if (group.transform.bezierControlPoints.size() >= 4) {
+                group.transform.bezierCurve = generateBezierCurve(group.transform.bezierControlPoints);
+            }
+        }
     }
 
-	if (DEBUG) cerr << "parsed tranforms" << endl;
+    if (DEBUG) cerr << "parsed tranforms" << endl;
 
     // Parse models
     XMLElement* modelsElem = groupElem->FirstChildElement("models");
     if (modelsElem) {
-
-		if (DEBUG) cerr << "Parsing models element" << endl;
+        if (DEBUG) cerr << "Parsing models element" << endl;
 
         for (XMLElement* modelElem = modelsElem->FirstChildElement("model"); modelElem; modelElem = modelElem->NextSiblingElement("model")) {
             const char* file = modelElem->Attribute("file");
 
-			if (DEBUG) cerr << "Parsing model file: " << (file ? file : "null") << endl;
+            if (DEBUG) cerr << "Parsing model file: " << (file ? file : "null") << endl;
             
             if (file) {
                 Model model;
                 if (loadModel(file, model)) {
                     group.models.push_back(model);
-
                     if (DEBUG) cerr << "Successfully loaded model: " << file << endl;
-
-				}
+                }
                 else {
                     if (DEBUG) cerr << "Failed to load model: " << file << endl;
                 }
-			}
+            }
             else {
                 if (DEBUG) cerr << "Model file attribute is missing" << endl;
             }
         }
     }
 
-	if (DEBUG) cerr << "Parsed " << group.models.size() << " models." << endl;
+    if (DEBUG) cerr << "Parsed " << group.models.size() << " models." << endl;
 
     // Parse child groups
     for (XMLElement* child = groupElem->FirstChildElement("group"); child; child = child->NextSiblingElement("group")) {
         group.children.push_back(parseGroup(child));
     }
 
-	if (DEBUG) cerr << "Parsed group with " << group.models.size() << " models and " << group.children.size() << " children." << endl;
+    if (DEBUG) cerr << "Parsed group with " << group.models.size() << " models and " << group.children.size() << " children." << endl;
 
     return group;
 }
@@ -394,7 +418,7 @@ void renderModel(const Model& model, const vector<float>& color) {
 void applyTransform(const Transform& transform) {
     // Handle time-based rotation
     if (transform.isTimedRotation) {
-        float elapsed = glutGet(GLUT_ELAPSED_TIME) / 1000.0f; // seconds
+        float elapsed = glutGet(GLUT_ELAPSED_TIME) / 1000.0f;
         float angle = fmod((elapsed / transform.rotationTime) * 360.0f, 360.0f);
         glRotatef(angle, transform.rotate[1], transform.rotate[2], transform.rotate[3]);
     }
@@ -405,40 +429,38 @@ void applyTransform(const Transform& transform) {
 
     // Handle time-based translation
     if (transform.isTimedTranslation && !transform.translationPoints.empty()) {
-        float elapsed = glutGet(GLUT_ELAPSED_TIME) / 1000.0f; // seconds
+        float elapsed = glutGet(GLUT_ELAPSED_TIME) / 1000.0f;
         float t = fmod(elapsed / transform.translationTime, 1.0f);
 
-        // Calculate global T (considering all segments)
         int numSegments = transform.translationPoints.size() - 3;
         float segmentT = t * numSegments;
         int segmentIndex = floor(segmentT);
         segmentT = segmentT - segmentIndex;
 
-        // Get the 4 points for this segment
         vector<vector<float>> p(4);
         for (int i = 0; i < 4; i++) {
             p[i] = transform.translationPoints[segmentIndex + i];
+            p[i][1] = -p[i][1];  // Invertir coordenada Y
         }
 
-        // Get position on curve
         vector<float> pos = getCatmullRomPoint(segmentT, p);
         glTranslatef(pos[0], pos[1], pos[2]);
 
-        // Align with path if requested
         if (transform.alignWithPath) {
             vector<float> deriv = getCatmullRomDerivative(segmentT, p);
-            // Normalize derivative to get forward vector
             float len = sqrt(deriv[0] * deriv[0] + deriv[1] * deriv[1] + deriv[2] * deriv[2]);
             if (len > 0.0001f) {
                 deriv[0] /= len;
                 deriv[1] /= len;
                 deriv[2] /= len;
 
-                // Calculate rotation to align with path
+                // Compensación para la rotación inicial de -90° en X
+                glRotatef(-90, 1, 0, 0);
+
+                // Cálculo de orientación corregido para Y invertido
                 float angle = atan2(deriv[0], deriv[2]) * 180.0f / M_PI;
                 glRotatef(angle, 0, 1, 0);
 
-                // Calculate pitch (up/down rotation)
                 float pitch = asin(deriv[1]) * 180.0f / M_PI;
                 glRotatef(pitch, 1, 0, 0);
             }
@@ -454,15 +476,35 @@ void applyTransform(const Transform& transform) {
 }
 
 void renderGroup(const Group& group) {
-    glPushMatrix();
-    applyTransform(group.transform);
+    /*
+    // 1. First draw the rotating curve (using original coordinates, no Y inversion)
+    if (!group.transform.bezierCurve.empty()) {
+        glPushMatrix();
 
-    // Render models in this group
+        // Apply only Y-axis rotation (same as teapot will get)
+        float currentRotation = 0.0f;
+        if (group.transform.isTimedRotation) {
+            float elapsed = glutGet(GLUT_ELAPSED_TIME) / 1000.0f;
+            currentRotation = fmod((elapsed / group.transform.rotationTime) * 360.0f, 360.0f);
+        }
+        else if (group.transform.rotate[0] != 0) {
+            currentRotation = group.transform.rotate[0];
+        }
+        glRotatef(currentRotation, 0.0f, 1.0f, 0.0f);
+
+        // Draw curve with ORIGINAL coordinates (no Y inversion)
+        drawBezierCurve(group.transform.bezierCurve);
+
+        glPopMatrix();
+    }
+    */
+    // 2. Render teapot with full transformations
+    glPushMatrix();
+    applyTransform(group.transform); // This handles the rotation AND path following
+
     for (size_t i = 0; i < group.models.size(); ++i) {
         renderModel(group.models[i], modelColors[i % modelColors.size()]);
     }
-
-    // Render children
     for (const auto& child : group.children) {
         renderGroup(child);
     }
@@ -549,6 +591,36 @@ vector<float> getCatmullRomDerivative(float t, const vector<vector<float>>& p) {
     }
 
     return derivative;
+}
+
+vector<vector<float>> generateBezierCurve(const vector<vector<float>>& controlPoints, int segments) {
+    vector<vector<float>> curvePoints;
+    for (int i = 0; i <= segments; ++i) {
+        float t = static_cast<float>(i) / segments;
+        float u = 1.0f - t;
+
+        // Fórmula de Bézier cúbica
+        float x = u * u * u * controlPoints[0][0] + 3 * u * u * t * controlPoints[1][0] +
+            3 * u * t * t * controlPoints[2][0] + t * t * t * controlPoints[3][0];
+        float y = u * u * u * controlPoints[0][1] + 3 * u * u * t * controlPoints[1][1] +
+            3 * u * t * t * controlPoints[2][1] + t * t * t * controlPoints[3][1];
+        float z = u * u * u * controlPoints[0][2] + 3 * u * u * t * controlPoints[1][2] +
+            3 * u * t * t * controlPoints[2][2] + t * t * t * controlPoints[3][2];
+
+        curvePoints.push_back({ x, y, z });
+    }
+    return curvePoints;
+}
+
+void drawBezierCurve(const vector<vector<float>>& curvePoints) {
+    glDisable(GL_LIGHTING);
+    glColor3f(1.0f, 0.0f, 1.0f); // Magenta color for better visibility
+    glBegin(GL_LINE_STRIP);
+    for (const auto& point : curvePoints) {
+        glVertex3f(point[0], point[1], point[2]);
+    }
+    glEnd();
+    glEnable(GL_LIGHTING);
 }
 
 // Functions to initialize and render with VBOs
