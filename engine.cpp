@@ -20,6 +20,9 @@
 using namespace std;
 using namespace tinyxml2;
 
+// Debug variable
+bool DEBUG = true;
+
 // Structures
 struct Camera {
     float posX, posY, posZ;
@@ -47,13 +50,12 @@ struct Transform {
     float rotate[4] = { 0, 0, 1, 0 }; // angle, x, y, z
     float scale[3] = { 1, 1, 1 };
 
-    // New for Phase 3
     bool isTimedRotation = false;
-    float rotationTime = 0; // seconds for full rotation
+    float rotationTime = 0;
     bool isTimedTranslation = false;
-    float translationTime = 0; // seconds for full path
+    float translationTime = 0;
     bool alignWithPath = false;
-    vector<vector<float>> translationPoints; // Catmull-Rom control points
+    vector<vector<float>> translationPoints;
 };
 
 struct Group {
@@ -69,12 +71,12 @@ Group rootGroup;
 float cameraTheta = 0, cameraPhi = 0, cameraRadius = 10;
 
 vector<vector<float>> modelColors = {
-    {1.0f, 0.0f, 0.0f}, // Red
-    {0.0f, 1.0f, 0.0f}, // Green
-    {0.0f, 0.0f, 1.0f}, // Blue
-    {1.0f, 1.0f, 0.0f}, // Yellow
-    {1.0f, 0.0f, 1.0f}, // Magenta
-    {0.0f, 1.0f, 1.0f}  // Cyan
+    {1.0f, 0.0f, 0.0f},
+    {0.0f, 1.0f, 0.0f},
+    {0.0f, 0.0f, 1.0f},
+    {1.0f, 1.0f, 0.0f},
+    {1.0f, 0.0f, 1.0f},
+    {0.0f, 1.0f, 1.0f}
 };
 
 // Function prototypes
@@ -101,13 +103,13 @@ void renderModelWithVBOs(const Model& model, const vector<float>& color);
 bool readXMLConfig(const string& filename, Window& window, Camera& camera, Group& rootGroup) {
     XMLDocument doc;
     if (doc.LoadFile(filename.c_str()) != XML_SUCCESS) {
-        cerr << "Error loading XML file: " << filename << endl;
+        if (DEBUG) cerr << "Error loading XML file: " << filename << endl;
         return false;
     }
 
     XMLElement* world = doc.FirstChildElement("world");
     if (!world) {
-        cerr << "No 'world' element found" << endl;
+        if (DEBUG) cerr << "No 'world' element found" << endl;
         return false;
     }
 
@@ -148,12 +150,17 @@ bool readXMLConfig(const string& filename, Window& window, Camera& camera, Group
             projection->QueryFloatAttribute("near", &camera.near);
             projection->QueryFloatAttribute("far", &camera.far);
         }
+
     }
+    if (DEBUG) cerr << "Camera position: (" << camera.posX << ", " << camera.posY << ", " << camera.posZ << ")" << endl;
+	if (DEBUG) cerr << "Window size: " << window.width << "x" << window.height << endl;
 
     // Initialize camera orbit controls
     cameraRadius = sqrt(camera.posX * camera.posX + camera.posY * camera.posY + camera.posZ * camera.posZ);
     cameraTheta = atan2(camera.posZ, camera.posX);
     cameraPhi = asin(camera.posY / cameraRadius);
+
+	if (DEBUG) cerr << "Camera radius: " << cameraRadius << endl;
 
     // Parse scene graph
     XMLElement* groupElem = world->FirstChildElement("group");
@@ -161,11 +168,20 @@ bool readXMLConfig(const string& filename, Window& window, Camera& camera, Group
         rootGroup = parseGroup(groupElem);
     }
 
+	if (DEBUG) cerr << "Parsed group with " << rootGroup.models.size() << " models." << endl;
+
     return true;
 }
 
 Group parseGroup(XMLElement* groupElem) {
     Group group;
+
+	if (!groupElem) {
+		if (DEBUG) cerr << "Error: groupElem is null" << endl;
+		return group;
+	}
+
+	if (DEBUG) cerr << "Parsing group element" << endl;
 
     // Parse transforms
     XMLElement* transformElem = groupElem->FirstChildElement("transform");
@@ -223,33 +239,57 @@ Group parseGroup(XMLElement* groupElem) {
         }
     }
 
+	if (DEBUG) cerr << "parsed tranforms" << endl;
+
     // Parse models
     XMLElement* modelsElem = groupElem->FirstChildElement("models");
     if (modelsElem) {
+
+		if (DEBUG) cerr << "Parsing models element" << endl;
+
         for (XMLElement* modelElem = modelsElem->FirstChildElement("model"); modelElem; modelElem = modelElem->NextSiblingElement("model")) {
             const char* file = modelElem->Attribute("file");
+
+			if (DEBUG) cerr << "Parsing model file: " << (file ? file : "null") << endl;
+            
             if (file) {
                 Model model;
                 if (loadModel(file, model)) {
                     group.models.push_back(model);
+
+                    if (DEBUG) cerr << "Successfully loaded model: " << file << endl;
+
+				}
+                else {
+                    if (DEBUG) cerr << "Failed to load model: " << file << endl;
                 }
+			}
+            else {
+                if (DEBUG) cerr << "Model file attribute is missing" << endl;
             }
         }
     }
+
+	if (DEBUG) cerr << "Parsed " << group.models.size() << " models." << endl;
 
     // Parse child groups
     for (XMLElement* child = groupElem->FirstChildElement("group"); child; child = child->NextSiblingElement("group")) {
         group.children.push_back(parseGroup(child));
     }
 
+	if (DEBUG) cerr << "Parsed group with " << group.models.size() << " models and " << group.children.size() << " children." << endl;
+
     return group;
 }
 
 // Model Loading
 bool loadModel(const string& filename, Model& model) {
+
+	if (DEBUG) cerr << "Loading model from file: " << filename << endl;
+
     ifstream file(filename);
     if (!file.is_open()) {
-        cerr << "Error opening model file: " << filename << endl;
+        if (DEBUG) cerr << "Error opening model file: " << filename << endl;
         return false;
     }
 
@@ -277,8 +317,12 @@ bool loadModel(const string& filename, Model& model) {
 
     file.close();
 
+	if (DEBUG) cerr << "Loaded " << numVertices << " vertices and " << numFaces << " faces." << endl;
+
 	// Initialize VBOs for the model
 	initModelVBOs(model);
+
+	if (DEBUG) cerr << "Model loaded successfully." << endl;
 
     return true;
 }
@@ -511,23 +555,49 @@ vector<float> getCatmullRomDerivative(float t, const vector<vector<float>>& p) {
 void initModelVBOs(Model& model) {
     if (model.buffersInitialized) return;
 
-    // Generate and bind vertex buffer
+    if (DEBUG) cerr << "Initializing VBOs..." << endl;
+
+    // Check for valid OpenGL context
+    if (!glGenBuffers) {
+        if (DEBUG) cerr << "OpenGL buffer functions not loaded!" << endl;
+        return;
+    }
+
+    // Generate vertex buffer
     glGenBuffers(1, &model.vertexBuffer);
     glBindBuffer(GL_ARRAY_BUFFER, model.vertexBuffer);
-    glBufferData(GL_ARRAY_BUFFER, model.vertices.size() * sizeof(float), model.vertices.data(), GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER,
+        model.vertices.size() * sizeof(float),
+        model.vertices.data(),
+        GL_STATIC_DRAW);
 
-    // Generate and bind index buffer
+    // Check for errors
+    GLenum err = glGetError();
+    if (err != GL_NO_ERROR) {
+        if (DEBUG) cerr << "OpenGL error in vertex buffer creation: " << err << endl;
+    }
+
+    // Generate index buffer
     glGenBuffers(1, &model.indexBuffer);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, model.indexBuffer);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, model.faces.size() * sizeof(int), model.faces.data(), GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER,
+        model.faces.size() * sizeof(int),
+        model.faces.data(),
+        GL_STATIC_DRAW);
+
+    err = glGetError();
+    if (err != GL_NO_ERROR) {
+        if (DEBUG) cerr << "OpenGL error in index buffer creation: " << err << endl;
+    }
 
     model.buffersInitialized = true;
+    if (DEBUG) cerr << "VBOs initialized successfully" << endl;
 }
 
 void renderModelWithVBOs(const Model& model, const vector<float>& color) {
     if (!model.buffersInitialized) {
         // This shouldn't happen since we initialize VBOs during loading
-        cerr << "Error: Trying to render model with uninitialized VBOs" << endl;
+        if (DEBUG) cerr << "Error: Trying to render model with uninitialized VBOs" << endl;
         return;
     }
 
@@ -551,25 +621,12 @@ void renderModelWithVBOs(const Model& model, const vector<float>& color) {
 // Main Function
 int main(int argc, char** argv) {
 
-    /*
-    cout << "Program starting" << endl;
-    cerr << "Error output test" << endl;
-    fflush(stdout);  // Force output flush
-    */
     if (argc != 2) {
         cerr << "Usage: " << argv[0] << " <config.xml>" << endl;
         return 1;
     }
 
-	cerr << "Starting program with config: " << argv[1] << endl;
-
-    // Load configuration
-    if (!readXMLConfig(argv[1], window, camera, rootGroup)) {
-        cerr << "Failed to load configuration!" << endl;
-        return 1;
-    }
-
-    cerr << "Config loaded" << endl;
+	if (DEBUG) cerr << "Starting program with config: " << argv[1] << endl;
 
     // Initialize GLUT
     glutInit(&argc, argv);
@@ -577,18 +634,30 @@ int main(int argc, char** argv) {
     glutInitWindowSize(window.width, window.height);
     glutCreateWindow("3D Engine - Phase 3");
 
-	cerr << "GLUT initialized" << endl;
+	if (DEBUG) cerr << "GLUT initialized" << endl;
 
     // Initialize GLEW (needed for VBOs on Windows)
 #ifdef WIN32
     GLenum err = glewInit();
     if (err != GLEW_OK) {
-        cerr << "Error initializing GLEW: " << glewGetErrorString(err) << endl;
+        if (DEBUG) cerr << "Error initializing GLEW: " << glewGetErrorString(err) << endl;
         return 1;
     }
 #endif
 
-	cerr << "GLEW initialized" << endl;
+	if (DEBUG) cerr << "GLEW initialized" << endl;
+
+    // Load configuration
+    if (!readXMLConfig(argv[1], window, camera, rootGroup)) {
+        if (DEBUG) cerr << "Failed to load configuration!" << endl;
+        return 1;
+    }
+    
+    // Resize window if needed
+    if (window.width != 800 || window.height != 600) {
+        glutReshapeWindow(window.width, window.height);
+    }
+    if (DEBUG) cerr << "Config loaded" << endl;
 
     // OpenGL settings
     glEnable(GL_DEPTH_TEST);
