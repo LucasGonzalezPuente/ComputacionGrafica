@@ -1,0 +1,180 @@
+<world>
+    <window width="1024" height="768" />
+    <camera>
+        <position x="0" y="50" z="100" />
+        <lookAt x="0" y="0" z="0" />
+        <up x="0" y="1" z="0" />
+        <projection fov="60" near="1" far="10000" />
+    </camera>
+
+    <!-- Sun (center of the solar system) -->
+    <group>
+        <transform>
+            <scale x="5" y="5" z="5" />
+            <rotate time="30" x="0" y="1" z="0" /> <!-- Sun rotates slowly -->
+        </transform>
+        <models>
+            <model file="sphere_1_8_8.3d" />
+        </models>
+
+        <!-- Mercury -->
+        <group>
+            <transform>
+                <rotate time="8" x="0" y="1" z="0" />
+                <translate x="15" y="0" z="0" />
+                <scale x="0.4" y="0.4" z="0.4" />
+            </transform>
+            <models>
+                <model file="sphere_1_8_8.3d" />
+            </models>
+        </group>
+
+        <!-- Venus -->
+        <group>
+            <transform>
+                <rotate time="20" x="0" y="1" z="0" />
+                <translate x="25" y="0" z="0" />
+                <scale x="0.6" y="0.6" z="0.6" />
+            </transform>
+            <models>
+                <model file="sphere_1_8_8.3d" />
+            </models>
+        </group>
+
+        <!-- Earth with Moon -->
+        <group>
+            <transform>
+                <rotate time="36" x="0" y="1" z="0" />
+                <translate x="35" y="0" z="0" />
+                <scale x="0.7" y="0.7" z="0.7" />
+            </transform>
+            <models>
+                <model file="sphere_1_8_8.3d" />
+            </models>
+
+            <!-- Moon -->
+            <group>
+                <transform>
+                    <rotate time="2.7" x="0" y="1" z="0" />
+                    <translate x="5" y="0" z="0" />
+                    <scale x="0.2" y="0.2" z="0.2" />
+                </transform>
+                <models>
+                    <model file="sphere_1_8_8.3d" />
+                </models>
+            </group>
+        </group>
+
+        <!-- Mars with 2 moons -->
+        <group>
+            <transform>
+                <rotate time="68" x="0" y="1" z="0" />
+                <translate x="45" y="0" z="0" />
+                <scale x="0.5" y="0.5" z="0.5" />
+            </transform>
+            <models>
+                <model file="sphere_1_8_8.3d" />
+            </models>
+
+            <!-- Phobos -->
+            <group>
+                <transform>
+                    <rotate time="0.3" x="0" y="1" z="0" />
+                    <translate x="3" y="0" z="0" />
+                    <scale x="0.1" y="0.1" z="0.1" />
+                </transform>
+                <models>
+                    <model file="sphere_1_8_8.3d" />
+                </models>
+            </group>
+
+            <!-- Deimos -->
+            <group>
+                <transform>
+                    <rotate time="1.2" x="0" y="1" z="0" />
+                    <translate x="4" y="0" z="2" />
+                    <scale x="0.08" y="0.08" z="0.08" />
+                </transform>
+                <models>
+                    <model file="sphere_1_8_8.3d" />
+                </models>
+            </group>
+        </group>
+
+        <!-- Jupiter with 4 major moons -->
+        <group>
+            <transform>
+                <rotate time="432" x="0" y="1" z="0" /> <!-- 12x Earth's orbit time -->
+                <translate x="60" y="0" z="0" />
+                <scale x="1.5" y="1.5" z="1.5" />
+            </transform>
+            <models>
+                <model file="sphere_1_8_8.3d" />
+            </models>
+
+            <!-- Galilean moons -->
+            <group>
+                <transform>
+                    <rotate time="1.7" x="0" y="1" z="0" />
+                    <translate x="8" y="0" z="0" />
+                    <scale x="0.3" y="0.3" z="0.3" />
+                </transform>
+                <models>
+                    <model file="sphere_1_8_8.3d" />
+                </models>
+            </group>
+            <group>
+                <transform>
+                    <rotate time="3.5" x="0" y="1" z="0" />
+                    <translate x="10" y="0" z="0" />
+                    <scale x="0.25" y="0.25" z="0.25" />
+                </transform>
+                <models>
+                    <model file="sphere_1_8_8.3d" />
+                </models>
+            </group>
+            <group>
+                <transform>
+                    <rotate time="7.1" x="0" y="1" z="0" />
+                    <translate x="6" y="0" z="3" />
+                    <scale x="0.2" y="0.2" z="0.2" />
+                </transform>
+                <models>
+                    <model file="sphere_1_8_8.3d" />
+                </models>
+            </group>
+            <group>
+                <transform>
+                    <rotate time="16.7" x="0" y="1" z="0" />
+                    <translate x="7" y="0" z="-3" />
+                    <scale x="0.22" y="0.22" z="0.22" />
+                </transform>
+                <models>
+                    <model file="sphere_1_8_8.3d" />
+                </models>
+            </group>
+        </group>
+
+        <!-- Comet with Bezier trajectory -->
+        <group>
+            <transform>
+                <rotate time="5" x="0" y="1" z="0" />
+                <translate time="20" align="true">
+                    <point x="-30" y="10" z="-30" />
+                    <point x="-20" y="15" z="-10" />
+                    <point x="0" y="20" z="0" />
+                    <point x="20" y="15" z="10" />
+                    <point x="30" y="10" z="30" />
+                    <point x="20" y="5" z="40" />
+                    <point x="0" y="0" z="50" />
+                    <point x="-20" y="5" z="40" />
+                    <point x="-30" y="10" z="30" />
+                </translate>
+                <scale x="0.3" y="0.3" z="0.3" />
+            </transform>
+            <models>
+                <model file="comet.3d" />
+            </models>
+        </group>
+    </group>
+</world>
