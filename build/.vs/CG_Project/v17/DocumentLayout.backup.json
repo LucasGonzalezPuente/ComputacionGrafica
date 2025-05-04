@@ -7,9 +7,6 @@
     },
     {
       "AbsoluteMoniker": "D:0:0:{9A1BEADC-3B2A-33FF-8728-A85F25D39428}|engine.vcxproj|D:\\UniErasmus\\2cuatri\\CG\\TRABAJO\\OnTheWork\\engine.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{9A1BEADC-3B2A-33FF-8728-A85F25D39428}|engine.vcxproj|D:\\UniErasmus\\2cuatri\\CG\\TRABAJO\\OnTheWork\\CMakeLists.txt||{8B382828-6202-11D1-8870-0000F87579D2}"
     }
   ],
   "DocumentGroupContainers": [
@@ -19,27 +16,11 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 3,
+          "SelectedChildIndex": 1,
           "Children": [
             {
               "$type": "Bookmark",
-              "Name": "ST:0:0:{269a02dc-6af8-11d3-bdc4-00c04f688e50}"
-            },
-            {
-              "$type": "Bookmark",
               "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "CMakeLists.txt",
-              "DocumentMoniker": "D:\\UniErasmus\\2cuatri\\CG\\TRABAJO\\OnTheWork\\CMakeLists.txt",
-              "RelativeDocumentMoniker": "..\\CMakeLists.txt",
-              "ToolTip": "D:\\UniErasmus\\2cuatri\\CG\\TRABAJO\\OnTheWork\\CMakeLists.txt",
-              "RelativeToolTip": "..\\CMakeLists.txt",
-              "ViewState": "AgIAAA8AAAAAAAAAAAAQwCAAAAAtAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003109|",
-              "WhenOpened": "2025-04-26T19:23:21.052Z"
             },
             {
               "$type": "Document",
@@ -47,9 +28,9 @@
               "Title": "generator.cpp",
               "DocumentMoniker": "D:\\UniErasmus\\2cuatri\\CG\\TRABAJO\\OnTheWork\\generator.cpp",
               "RelativeDocumentMoniker": "..\\generator.cpp",
-              "ToolTip": "D:\\UniErasmus\\2cuatri\\CG\\TRABAJO\\OnTheWork\\generator.cpp*",
-              "RelativeToolTip": "..\\generator.cpp*",
-              "ViewState": "AgIAAIMDAAAAAAAAAAAuwJIDAAAWAAAAAAAAAA==",
+              "ToolTip": "D:\\UniErasmus\\2cuatri\\CG\\TRABAJO\\OnTheWork\\generator.cpp",
+              "RelativeToolTip": "..\\generator.cpp",
+              "ViewState": "AgIAADMDAAAAAAAAAAAQwFQDAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2025-04-07T14:52:50.875Z",
               "EditorCaption": ""
@@ -62,7 +43,7 @@
               "RelativeDocumentMoniker": "..\\engine.cpp",
               "ToolTip": "D:\\UniErasmus\\2cuatri\\CG\\TRABAJO\\OnTheWork\\engine.cpp",
               "RelativeToolTip": "..\\engine.cpp",
-              "ViewState": "AgIAAMoDAAAAAAAAAAAuwOUDAAABAAAAAAAAAA==",
+              "ViewState": "AgIAAEgEAAAAAAAAAAAlwGMEAAAGAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2025-03-30T20:17:14.436Z",
               "EditorCaption": ""

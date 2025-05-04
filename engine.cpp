@@ -1121,7 +1121,7 @@ int main(int argc, char** argv) {
 
     // --- Configuración Inicial de OpenGL ---
     glEnable(GL_DEPTH_TEST); // Habilitar test de profundidad
-    glEnable(GL_CULL_FACE);  // Opcional: Habilitar culling (ocultar caras traseras)
+    //glEnable(GL_CULL_FACE);  // Opcional: Habilitar culling (ocultar caras traseras)
     glFrontFace(GL_CCW);     // Definir orden de vértices para caras frontales (Counter-Clockwise)
     glClearColor(0.1f, 0.1f, 0.15f, 1.0f); // Color de fondo oscuro
 
