@@ -1,2 +1,5 @@
-﻿  engine.cpp
+﻿  Building Custom Rule D:/UniErasmus/2cuatri/CG/TRABAJO/OnTheWork/CMakeLists.txt
+  engine.cpp
+  tinyxml2.cpp
+  Generando código...
   engine.vcxproj -> D:\UniErasmus\2cuatri\CG\TRABAJO\OnTheWork\build\Debug\engine.exe
