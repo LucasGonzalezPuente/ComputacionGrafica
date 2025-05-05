@@ -86,7 +86,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
-      <AdditionalIncludeDirectories>D:\UniErasmus\2cuatri\CG\TRABAJO\OnTheWork\GivenFiles\toolkits\glut;D:\UniErasmus\2cuatri\CG\TRABAJO\OnTheWork\GivenFiles\toolkits\glew;D:\UniErasmus\2cuatri\CG\TRABAJO\OnTheWork\GivenFiles\toolkits;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\UniErasmus\2cuatri\CG\TRABAJO\OnTheWork\include;D:\UniErasmus\2cuatri\CG\TRABAJO\OnTheWork\GivenFiles\toolkits\glut;D:\UniErasmus\2cuatri\CG\TRABAJO\OnTheWork\GivenFiles\toolkits\glew;D:\UniErasmus\2cuatri\CG\TRABAJO\OnTheWork\GivenFiles\toolkits;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -104,10 +104,10 @@
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_DEBUG;_WINDOWS;CMAKE_INTDIR=\"Debug\"</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>D:\UniErasmus\2cuatri\CG\TRABAJO\OnTheWork\GivenFiles\toolkits\glut;D:\UniErasmus\2cuatri\CG\TRABAJO\OnTheWork\GivenFiles\toolkits\glew;D:\UniErasmus\2cuatri\CG\TRABAJO\OnTheWork\GivenFiles\toolkits;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\UniErasmus\2cuatri\CG\TRABAJO\OnTheWork\include;D:\UniErasmus\2cuatri\CG\TRABAJO\OnTheWork\GivenFiles\toolkits\glut;D:\UniErasmus\2cuatri\CG\TRABAJO\OnTheWork\GivenFiles\toolkits\glew;D:\UniErasmus\2cuatri\CG\TRABAJO\OnTheWork\GivenFiles\toolkits;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>
-      <AdditionalIncludeDirectories>D:\UniErasmus\2cuatri\CG\TRABAJO\OnTheWork\GivenFiles\toolkits\glut;D:\UniErasmus\2cuatri\CG\TRABAJO\OnTheWork\GivenFiles\toolkits\glew;D:\UniErasmus\2cuatri\CG\TRABAJO\OnTheWork\GivenFiles\toolkits;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\UniErasmus\2cuatri\CG\TRABAJO\OnTheWork\include;D:\UniErasmus\2cuatri\CG\TRABAJO\OnTheWork\GivenFiles\toolkits\glut;D:\UniErasmus\2cuatri\CG\TRABAJO\OnTheWork\GivenFiles\toolkits\glew;D:\UniErasmus\2cuatri\CG\TRABAJO\OnTheWork\GivenFiles\toolkits;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -115,7 +115,7 @@
       <ProxyFileName>%(Filename)_p.c</ProxyFileName>
     </Midl>
     <Link>
-      <AdditionalDependencies>opengl32.lib;glu32.lib;D:\UniErasmus\2cuatri\CG\TRABAJO\OnTheWork\GivenFiles\toolkits\glut\glut32.lib;D:\UniErasmus\2cuatri\CG\TRABAJO\OnTheWork\GivenFiles\toolkits\glew\glew32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
+      <AdditionalDependencies>D:\UniErasmus\2cuatri\CG\TRABAJO\OnTheWork\lib\x86\Release\DevIL.lib;opengl32.lib;glu32.lib;D:\UniErasmus\2cuatri\CG\TRABAJO\OnTheWork\GivenFiles\toolkits\glut\glut32.lib;D:\UniErasmus\2cuatri\CG\TRABAJO\OnTheWork\GivenFiles\toolkits\glew\glew32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalOptions>%(AdditionalOptions) /machine:X86</AdditionalOptions>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -130,7 +130,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
-      <AdditionalIncludeDirectories>D:\UniErasmus\2cuatri\CG\TRABAJO\OnTheWork\GivenFiles\toolkits\glut;D:\UniErasmus\2cuatri\CG\TRABAJO\OnTheWork\GivenFiles\toolkits\glew;D:\UniErasmus\2cuatri\CG\TRABAJO\OnTheWork\GivenFiles\toolkits;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\UniErasmus\2cuatri\CG\TRABAJO\OnTheWork\include;D:\UniErasmus\2cuatri\CG\TRABAJO\OnTheWork\GivenFiles\toolkits\glut;D:\UniErasmus\2cuatri\CG\TRABAJO\OnTheWork\GivenFiles\toolkits\glew;D:\UniErasmus\2cuatri\CG\TRABAJO\OnTheWork\GivenFiles\toolkits;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
       <ExceptionHandling>Sync</ExceptionHandling>
@@ -149,10 +149,10 @@
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;CMAKE_INTDIR=\"Release\"</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>D:\UniErasmus\2cuatri\CG\TRABAJO\OnTheWork\GivenFiles\toolkits\glut;D:\UniErasmus\2cuatri\CG\TRABAJO\OnTheWork\GivenFiles\toolkits\glew;D:\UniErasmus\2cuatri\CG\TRABAJO\OnTheWork\GivenFiles\toolkits;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\UniErasmus\2cuatri\CG\TRABAJO\OnTheWork\include;D:\UniErasmus\2cuatri\CG\TRABAJO\OnTheWork\GivenFiles\toolkits\glut;D:\UniErasmus\2cuatri\CG\TRABAJO\OnTheWork\GivenFiles\toolkits\glew;D:\UniErasmus\2cuatri\CG\TRABAJO\OnTheWork\GivenFiles\toolkits;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>
-      <AdditionalIncludeDirectories>D:\UniErasmus\2cuatri\CG\TRABAJO\OnTheWork\GivenFiles\toolkits\glut;D:\UniErasmus\2cuatri\CG\TRABAJO\OnTheWork\GivenFiles\toolkits\glew;D:\UniErasmus\2cuatri\CG\TRABAJO\OnTheWork\GivenFiles\toolkits;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\UniErasmus\2cuatri\CG\TRABAJO\OnTheWork\include;D:\UniErasmus\2cuatri\CG\TRABAJO\OnTheWork\GivenFiles\toolkits\glut;D:\UniErasmus\2cuatri\CG\TRABAJO\OnTheWork\GivenFiles\toolkits\glew;D:\UniErasmus\2cuatri\CG\TRABAJO\OnTheWork\GivenFiles\toolkits;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -160,7 +160,7 @@
       <ProxyFileName>%(Filename)_p.c</ProxyFileName>
     </Midl>
     <Link>
-      <AdditionalDependencies>opengl32.lib;glu32.lib;D:\UniErasmus\2cuatri\CG\TRABAJO\OnTheWork\GivenFiles\toolkits\glut\glut32.lib;D:\UniErasmus\2cuatri\CG\TRABAJO\OnTheWork\GivenFiles\toolkits\glew\glew32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
+      <AdditionalDependencies>D:\UniErasmus\2cuatri\CG\TRABAJO\OnTheWork\lib\x86\Release\DevIL.lib;opengl32.lib;glu32.lib;D:\UniErasmus\2cuatri\CG\TRABAJO\OnTheWork\GivenFiles\toolkits\glut\glut32.lib;D:\UniErasmus\2cuatri\CG\TRABAJO\OnTheWork\GivenFiles\toolkits\glew\glew32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalOptions>%(AdditionalOptions) /machine:X86</AdditionalOptions>
       <GenerateDebugInformation>false</GenerateDebugInformation>
@@ -175,7 +175,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">
     <ClCompile>
-      <AdditionalIncludeDirectories>D:\UniErasmus\2cuatri\CG\TRABAJO\OnTheWork\GivenFiles\toolkits\glut;D:\UniErasmus\2cuatri\CG\TRABAJO\OnTheWork\GivenFiles\toolkits\glew;D:\UniErasmus\2cuatri\CG\TRABAJO\OnTheWork\GivenFiles\toolkits;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\UniErasmus\2cuatri\CG\TRABAJO\OnTheWork\include;D:\UniErasmus\2cuatri\CG\TRABAJO\OnTheWork\GivenFiles\toolkits\glut;D:\UniErasmus\2cuatri\CG\TRABAJO\OnTheWork\GivenFiles\toolkits\glew;D:\UniErasmus\2cuatri\CG\TRABAJO\OnTheWork\GivenFiles\toolkits;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
       <ExceptionHandling>Sync</ExceptionHandling>
@@ -194,10 +194,10 @@
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;CMAKE_INTDIR=\"MinSizeRel\"</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>D:\UniErasmus\2cuatri\CG\TRABAJO\OnTheWork\GivenFiles\toolkits\glut;D:\UniErasmus\2cuatri\CG\TRABAJO\OnTheWork\GivenFiles\toolkits\glew;D:\UniErasmus\2cuatri\CG\TRABAJO\OnTheWork\GivenFiles\toolkits;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\UniErasmus\2cuatri\CG\TRABAJO\OnTheWork\include;D:\UniErasmus\2cuatri\CG\TRABAJO\OnTheWork\GivenFiles\toolkits\glut;D:\UniErasmus\2cuatri\CG\TRABAJO\OnTheWork\GivenFiles\toolkits\glew;D:\UniErasmus\2cuatri\CG\TRABAJO\OnTheWork\GivenFiles\toolkits;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>
-      <AdditionalIncludeDirectories>D:\UniErasmus\2cuatri\CG\TRABAJO\OnTheWork\GivenFiles\toolkits\glut;D:\UniErasmus\2cuatri\CG\TRABAJO\OnTheWork\GivenFiles\toolkits\glew;D:\UniErasmus\2cuatri\CG\TRABAJO\OnTheWork\GivenFiles\toolkits;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\UniErasmus\2cuatri\CG\TRABAJO\OnTheWork\include;D:\UniErasmus\2cuatri\CG\TRABAJO\OnTheWork\GivenFiles\toolkits\glut;D:\UniErasmus\2cuatri\CG\TRABAJO\OnTheWork\GivenFiles\toolkits\glew;D:\UniErasmus\2cuatri\CG\TRABAJO\OnTheWork\GivenFiles\toolkits;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -205,7 +205,7 @@
       <ProxyFileName>%(Filename)_p.c</ProxyFileName>
     </Midl>
     <Link>
-      <AdditionalDependencies>opengl32.lib;glu32.lib;D:\UniErasmus\2cuatri\CG\TRABAJO\OnTheWork\GivenFiles\toolkits\glut\glut32.lib;D:\UniErasmus\2cuatri\CG\TRABAJO\OnTheWork\GivenFiles\toolkits\glew\glew32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
+      <AdditionalDependencies>D:\UniErasmus\2cuatri\CG\TRABAJO\OnTheWork\lib\x86\Release\DevIL.lib;opengl32.lib;glu32.lib;D:\UniErasmus\2cuatri\CG\TRABAJO\OnTheWork\GivenFiles\toolkits\glut\glut32.lib;D:\UniErasmus\2cuatri\CG\TRABAJO\OnTheWork\GivenFiles\toolkits\glew\glew32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalOptions>%(AdditionalOptions) /machine:X86</AdditionalOptions>
       <GenerateDebugInformation>false</GenerateDebugInformation>
@@ -220,7 +220,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">
     <ClCompile>
-      <AdditionalIncludeDirectories>D:\UniErasmus\2cuatri\CG\TRABAJO\OnTheWork\GivenFiles\toolkits\glut;D:\UniErasmus\2cuatri\CG\TRABAJO\OnTheWork\GivenFiles\toolkits\glew;D:\UniErasmus\2cuatri\CG\TRABAJO\OnTheWork\GivenFiles\toolkits;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\UniErasmus\2cuatri\CG\TRABAJO\OnTheWork\include;D:\UniErasmus\2cuatri\CG\TRABAJO\OnTheWork\GivenFiles\toolkits\glut;D:\UniErasmus\2cuatri\CG\TRABAJO\OnTheWork\GivenFiles\toolkits\glew;D:\UniErasmus\2cuatri\CG\TRABAJO\OnTheWork\GivenFiles\toolkits;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -238,10 +238,10 @@
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;CMAKE_INTDIR=\"RelWithDebInfo\"</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>D:\UniErasmus\2cuatri\CG\TRABAJO\OnTheWork\GivenFiles\toolkits\glut;D:\UniErasmus\2cuatri\CG\TRABAJO\OnTheWork\GivenFiles\toolkits\glew;D:\UniErasmus\2cuatri\CG\TRABAJO\OnTheWork\GivenFiles\toolkits;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\UniErasmus\2cuatri\CG\TRABAJO\OnTheWork\include;D:\UniErasmus\2cuatri\CG\TRABAJO\OnTheWork\GivenFiles\toolkits\glut;D:\UniErasmus\2cuatri\CG\TRABAJO\OnTheWork\GivenFiles\toolkits\glew;D:\UniErasmus\2cuatri\CG\TRABAJO\OnTheWork\GivenFiles\toolkits;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>
-      <AdditionalIncludeDirectories>D:\UniErasmus\2cuatri\CG\TRABAJO\OnTheWork\GivenFiles\toolkits\glut;D:\UniErasmus\2cuatri\CG\TRABAJO\OnTheWork\GivenFiles\toolkits\glew;D:\UniErasmus\2cuatri\CG\TRABAJO\OnTheWork\GivenFiles\toolkits;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\UniErasmus\2cuatri\CG\TRABAJO\OnTheWork\include;D:\UniErasmus\2cuatri\CG\TRABAJO\OnTheWork\GivenFiles\toolkits\glut;D:\UniErasmus\2cuatri\CG\TRABAJO\OnTheWork\GivenFiles\toolkits\glew;D:\UniErasmus\2cuatri\CG\TRABAJO\OnTheWork\GivenFiles\toolkits;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -249,7 +249,7 @@
       <ProxyFileName>%(Filename)_p.c</ProxyFileName>
     </Midl>
     <Link>
-      <AdditionalDependencies>opengl32.lib;glu32.lib;D:\UniErasmus\2cuatri\CG\TRABAJO\OnTheWork\GivenFiles\toolkits\glut\glut32.lib;D:\UniErasmus\2cuatri\CG\TRABAJO\OnTheWork\GivenFiles\toolkits\glew\glew32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
+      <AdditionalDependencies>D:\UniErasmus\2cuatri\CG\TRABAJO\OnTheWork\lib\x86\Release\DevIL.lib;opengl32.lib;glu32.lib;D:\UniErasmus\2cuatri\CG\TRABAJO\OnTheWork\GivenFiles\toolkits\glut\glut32.lib;D:\UniErasmus\2cuatri\CG\TRABAJO\OnTheWork\GivenFiles\toolkits\glew\glew32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalOptions>%(AdditionalOptions) /machine:X86</AdditionalOptions>
       <GenerateDebugInformation>true</GenerateDebugInformation>

@@ -79,7 +79,7 @@
 		<group> 
 			<transform> 
 				<scale x="0.2" y="0.2" z="0.2" />
-				<translate x = "2.5" y = "1.0" z = "-2.5" />
+				<translate x = "0.5" y = "0.2" z = "-0.5" />
 			</transform>
 			<models> 
 				<model file="box_2_3.3d" > <!-- generator 2 3 box_2_3.3d -->
